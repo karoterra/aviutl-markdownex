@@ -1,0 +1,15 @@
+* text=auto
+
+*.lua text eol=crlf linguist-language=Lua
+*.obj text eol=crlf linguist-language=Lua
+*.anm text eol=crlf linguist-language=Lua
+*.scn text eol=crlf linguist-language=Lua
+*.cam text eol=crlf linguist-language=Lua
+*.tra text eol=crlf linguist-language=Lua
+
+*.exa text eol=crlf
+*.exo text eol=crlf
+
+*.html text eol=lf
+*.js text eol=lf
+*.css text eol=lf
