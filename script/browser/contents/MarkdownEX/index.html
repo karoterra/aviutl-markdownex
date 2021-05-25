@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<style>
+html, body {
+  margin: 0;
+  padding: 0;
+}
+body {
+  margin-top: 1px;
+  overflow: hidden;
+}
+</style>
+<link rel="stylesheet" href="./css/markdown/github-markdown.css">
+<link rel="stylesheet" href="./css/hljs/github.css">
+<div class="markdown-body"></div>
+<script src="./marked.min.js"></script>
+<script src="./highlight.min.js"></script>
+<script type="module">
+marked.setOptions({
+  langPrefix: '',
+  highlight: (code, lang) => {
+    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+    return hljs.highlight(code, {language}).value;
+  },
+});
+
+const elem = document.querySelector('div.markdown-body');
+let current = '';
+AviUtlBrowser.registerRenderer(async params => {
+  const delim = params.param.indexOf("/");
+  if (delim == -1) {
+    throw new Error('invalid parameter');
+  }
+  const scale = parseInt(params.param.substring(0, delim), 10)/100;
+  elem.style.transformOrigin = 'top left';
+  elem.style.transform = `scale(${scale}, ${scale})`;
+  const m = params.param.substring(delim+1);
+  if (current == m) {
+    return '';
+  }
+  current = m;
+  elem.innerHTML = marked(current);
+  return '';
+});
+</script>
+</html>
