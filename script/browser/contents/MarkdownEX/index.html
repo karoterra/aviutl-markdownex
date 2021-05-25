@@ -15,6 +15,14 @@ body {
 <div class="markdown-body"></div>
 <script src="./marked.min.js"></script>
 <script src="./highlight.min.js"></script>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+  },
+};
+</script>
+<script id="MathJax-script" src="./mathjax/tex-chtml.js"></script>
 <script type="module">
 marked.setOptions({
   langPrefix: '',
@@ -32,14 +40,14 @@ AviUtlBrowser.registerRenderer(async params => {
     throw new Error('invalid parameter');
   }
   const scale = parseInt(params.param.substring(0, delim), 10)/100;
-  elem.style.transformOrigin = 'top left';
-  elem.style.transform = `scale(${scale}, ${scale})`;
+  elem.style.zoom = scale;
   const m = params.param.substring(delim+1);
   if (current == m) {
     return '';
   }
   current = m;
   elem.innerHTML = marked(current);
+  MathJax.typeset();
   return '';
 });
 </script>

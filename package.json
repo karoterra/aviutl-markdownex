@@ -10,7 +10,8 @@
     "copy:github-markdown-css": "cpx -u node_modules/github-markdown-css/github-markdown.css build/script/browser/contents/MarkdownEX/css/markdown/",
     "copy:hljs": "cpx -u submodules/highlight.js/build/highlight.min.js build/script/browser/contents/MarkdownEX/",
     "copy:hljs-styles": "cpx -u submodules/highlight.js/build/demo/styles/* build/script/browser/contents/MarkdownEX/css/hljs/",
-    "copy:lib": "run-s copy:{marked,github-markdown-css,hljs,hljs-styles}",
+    "copy:mathjax": "cpx -u node_modules/mathjax/es5/**/* build/script/browser/contents/MarkdownEX/mathjax/",
+    "copy:lib": "run-s copy:{marked,github-markdown-css,hljs,hljs-styles,mathjax}",
     "copy:src": "cpx -u script/**/* build/script/",
     "clean": "rimraf build"
   },
