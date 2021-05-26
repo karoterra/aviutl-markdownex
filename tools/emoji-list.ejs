@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>絵文字チートシート</title>
+  <style>
+    table {
+      margin-left: auto;
+      margin-right: auto;
+      border-collapse: collapse;
+    }
+    table tr {
+      background-color: #fff;
+    }
+    table tr:nth-child(2n) {
+      background-color: #f5f5f5;
+    }
+    table th, table td {
+      border: solid 1px black;
+    }
+    code {
+      background-color: rgba(30, 30, 30, 0.1);
+      border-radius: 6px;
+      padding: .2em .4em;
+    }
+    img {
+      height: 1.5em;
+    }
+  </style>
+</head>
+<body>
+  <table>
+    <tr>
+      <th>ico</th>
+      <th>keyword</th>
+    </tr>
+    <% for (var key in data) { %>
+      <tr>
+        <td><img src="./MarkdownEX/img/default/<%= data[key] %>"></td>
+        <td><code>:<%= key %>:</code></td>
+      </tr>
+    <% } %>
+  </table>
+</body>
+</html>

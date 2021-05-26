@@ -1,7 +1,10 @@
 const https = require('https');
 const fs = require('fs');
+const ejs = require('ejs');
 
-const outputPath = process.argv[2];
+const jsonPath = './script/browser/contents/MarkdownEX/img/default/setting.json';
+const htmlTmpl = fs.readFileSync('./tools/emoji-list.ejs', 'utf8');
+const htmlPath = './script/browser/contents/MarkdownEX-emoji-list.html';
 
 function getFilename(url) {
   return url.match(/https?:\/\/[\w!"\/+\-_~;.,]+\/([\w+\-_~;]+)\.\w+\?v\d+/)[1] + '.svg';
@@ -16,7 +19,8 @@ function generate(json) {
       data[key] = filename;
     }
   }
-  fs.writeFileSync(outputPath, JSON.stringify(data, undefined, 4));
+  fs.writeFileSync(jsonPath, JSON.stringify(data, undefined, 4), {encoding: 'utf8'});
+  fs.writeFileSync(htmlPath, ejs.render(htmlTmpl, {data: data}), {encoding: 'utf8'});
 }
 
 const options = {

@@ -15,6 +15,6 @@ end_of_line = crlf
 charset = shift-jis
 end_of_line = crlf
 
-[*.{html,css,js}]
+[*.{html,css,js,ejs}]
 indent_size = 2
 indent_style = space
