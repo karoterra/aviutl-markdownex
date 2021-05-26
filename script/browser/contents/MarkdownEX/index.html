@@ -24,12 +24,46 @@ MathJax = {
 </script>
 <script id="MathJax-script" src="./mathjax/tex-chtml.js"></script>
 <script type="module">
+const markdownStyle = document.getElementById('markdown-style');
+const hljsStyle = document.getElementById('hljs-style');
+const elem = document.querySelector('div.markdown-body');
+
+const current = {
+  markdown: '',
+  emojis_name: '',
+  emojis: {},
+};
+
+const loadEmojis = async name => {
+  return await fetch(`./img/${name}/setting.json`)
+    .then(r => r.text())
+    .then(t => JSON.parse(t));
+};
+
+const renderer = new marked.Renderer();
+renderer.text = text => {
+  let output = '';
+  let start = 0;
+  for (const match of text.matchAll(/:([a-zA-Z0-9-+_]+):/g)) {
+    output += text.substring(start, match.index);
+    start = match.index + match[0].length;
+    if (match[1] in current.emojis) {
+      output += `<img class="emoji" src="./img/${current.emojis_name}/${current.emojis[match[1]]}">`;
+    } else {
+      output += match[0];
+    }
+  }
+  output += text.substring(start);
+  return output;
+};
+
 marked.setOptions({
   langPrefix: '',
   highlight: (code, lang) => {
     const language = hljs.getLanguage(lang) ? lang : 'plaintext';
     return hljs.highlight(code, {language}).value;
   },
+  renderer: renderer,
 });
 
 const linkPrefix = `${location.protocol}//${location.host}`
@@ -50,19 +84,22 @@ const parseParam = param => {
   if (next == -1) return null;
   parsed.hljsStyle = `${linkPrefix}/css/hljs/${param.substring(prev, next)}.css`;
 
+  prev = next + 1;
+  next = param.indexOf('/', prev);
+  if (next == -1) return null;
+  parsed.emojis = param.substring(prev, next);
+
   parsed.markdown = param.substring(next + 1);
   return parsed;
 };
 
-const markdownStyle = document.getElementById('markdown-style');
-const hljsStyle = document.getElementById('hljs-style');
-const elem = document.querySelector('div.markdown-body');
-let current = '';
 AviUtlBrowser.registerRenderer(async params => {
   const param = parseParam(params.param);
   if (param == null) {
     throw new Error('invalid parameter');
   }
+
+  let update = false;
 
   elem.style.zoom = param.scale;
   if (markdownStyle.href !== param.markdownStyle) {
@@ -72,12 +109,21 @@ AviUtlBrowser.registerRenderer(async params => {
     hljsStyle.href = param.hljsStyle;
   }
 
-  if (current == param.markdown) {
-    return '';
+  if (current.emojis_name !== param.emojis) {
+    current.emojis_name = param.emojis;
+    current.emojis = await loadEmojis(param.emojis);
+    update = true;
   }
-  current = param.markdown;
-  elem.innerHTML = marked(current);
-  MathJax.typeset();
+  if (current.markdown !== param.markdown) {
+    current.markdown = param.markdown;
+    update = true;
+  }
+
+  if (update) {
+    elem.innerHTML = marked(current.markdown);
+    MathJax.typeset();
+  }
+
   return '';
 });
 </script>

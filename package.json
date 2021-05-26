@@ -11,8 +11,10 @@
     "copy:hljs": "cpx -u submodules/highlight.js/build/highlight.min.js build/script/browser/contents/MarkdownEX/",
     "copy:hljs-styles": "cpx -u submodules/highlight.js/build/demo/styles/* build/script/browser/contents/MarkdownEX/css/hljs/",
     "copy:mathjax": "cpx -u node_modules/mathjax/es5/**/* build/script/browser/contents/MarkdownEX/mathjax/",
-    "copy:lib": "run-s copy:{marked,github-markdown-css,hljs,hljs-styles,mathjax}",
+    "copy:lib": "run-s copy:{marked,hljs,hljs-styles,mathjax}",
+    "copy:assets": "cpx -u assets/twemoji/assets/svg/* build/script/browser/contents/MarkdownEX/img/default/",
     "copy:src": "cpx -u script/**/* build/script/",
+    "generate:emojis": "node ./tools/generate_emoji_list.js script/browser/contents/MarkdownEX/img/default/setting.json",
     "clean": "rimraf build"
   },
   "author": "",

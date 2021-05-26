@@ -8,7 +8,7 @@ markdown = markdown:gsub("([\128-\160\224-\255]\092)\092","%1")
 --track1:高さ,1,4000,900,1
 --track2:拡大率,1,1600,100,1
 --check0:DevTools,0
---dialog:Markdown,pms="github-markdown";ハイライト,phs="github"
+--dialog:Markdown,pms="github-markdown";ハイライト,phs="github";絵文字,pem="default"
 
 -- トラックバーで指定された大きさを元に画像サイズを決める
 -- 設定によるサイズ上限もあるので、それを超えないようにする
@@ -16,7 +16,7 @@ local max_w, max_h = obj.getinfo("image_max")
 local w = math.min(max_w, obj.track0)
 local h = math.min(max_h, obj.track1)
 
-local params = {obj.track2, pms, phs, markdown}
+local params = {obj.track2, pms, phs, pem, markdown}
 
 -- 空の画像を用意する
 obj.setoption("drawtarget", "tempbuffer", w, h)

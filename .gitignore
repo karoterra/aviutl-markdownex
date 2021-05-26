@@ -2,3 +2,5 @@ build/
 release/
 
 node_modules/
+
+assets/twemoji
