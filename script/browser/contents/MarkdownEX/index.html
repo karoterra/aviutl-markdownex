@@ -29,13 +29,14 @@ const hljsStyle = document.getElementById('hljs-style');
 const elem = document.querySelector('div.markdown-body');
 
 const current = {
+  file: 'a',
   markdown: '',
   emojis_name: '',
   emojis: {},
 };
 
-const loadEmojis = async name => {
-  return await fetch(`./img/${name}/setting.json`)
+const loadEmojis = name => {
+  return fetch(`./img/${name}/setting.json`)
     .then(r => r.text())
     .then(t => JSON.parse(t));
 };
@@ -68,37 +69,27 @@ marked.setOptions({
 
 const linkPrefix = `${location.protocol}//${location.host}`
 const parseParam = param => {
+  let prev = 0;
+  const popstring = () => {
+    const next = param.indexOf('/', prev);
+    if (next === -1) throw new Error('invalid parameter');
+    const s = param.substring(prev, next);
+    prev = next + 1;
+    return s;
+  }
+
   const parsed = {};
-
-  let next = param.indexOf('/');
-  if (next == -1) return null;
-  parsed.scale = parseInt(param.substring(0, next), 10) / 100;
-
-  let prev = next + 1;
-  next = param.indexOf('/', prev);
-  if (next == -1) return null;
-  parsed.markdownStyle = `${linkPrefix}/css/markdown/${param.substring(prev, next)}.css`;
-
-  prev = next + 1;
-  next = param.indexOf('/', prev);
-  if (next == -1) return null;
-  parsed.hljsStyle = `${linkPrefix}/css/hljs/${param.substring(prev, next)}.css`;
-
-  prev = next + 1;
-  next = param.indexOf('/', prev);
-  if (next == -1) return null;
-  parsed.emojis = param.substring(prev, next);
-
-  parsed.markdown = param.substring(next + 1);
+  parsed.mode = popstring();
+  parsed.scale = parseInt(popstring(), 10) / 100;
+  parsed.markdownStyle = `${linkPrefix}/css/markdown/${popstring()}.css`;
+  parsed.hljsStyle = `${linkPrefix}/css/hljs/${popstring()}.css`;
+  parsed.emojis = popstring();
+  parsed.markdown = param.substring(prev);
   return parsed;
 };
 
 AviUtlBrowser.registerRenderer(async params => {
   const param = parseParam(params.param);
-  if (param == null) {
-    throw new Error('invalid parameter');
-  }
-
   let update = false;
 
   elem.style.zoom = param.scale;
@@ -114,8 +105,13 @@ AviUtlBrowser.registerRenderer(async params => {
     current.emojis = await loadEmojis(param.emojis);
     update = true;
   }
-  if (current.markdown !== param.markdown) {
+
+  if (param.mode === "text" && current.markdown !== param.markdown) {
     current.markdown = param.markdown;
+    update = true;
+  } else if (param.mode === "file" && current.file !== params.userfile) {
+    current.file = params.userfile;
+    current.markdown = await fetch('/userfile').then(r => r.text());
     update = true;
   }
 
