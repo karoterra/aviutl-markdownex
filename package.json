@@ -13,6 +13,7 @@
     "copy:mathjax": "cpx -u node_modules/mathjax/es5/**/* build/script/browser/contents/MarkdownEX/mathjax/",
     "copy:lib": "run-s copy:{marked,hljs,hljs-styles,mathjax}",
     "copy:assets": "cpx -u assets/twemoji/assets/svg/* build/script/browser/contents/MarkdownEX/img/default/",
+    "copy:exa": "cpx -u testdata/*.exa build/script/browser/",
     "copy:src": "cpx -u script/**/* build/script/",
     "generate:emojis": "node ./tools/generate_emoji_list.js",
     "clean": "rimraf build"

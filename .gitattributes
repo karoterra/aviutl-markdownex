@@ -7,8 +7,8 @@
 *.cam text eol=crlf linguist-language=Lua
 *.tra text eol=crlf linguist-language=Lua
 
-*.exa text eol=crlf
-*.exo text eol=crlf
+*.exa text eol=crlf linguist-language=INI
+*.exo text eol=crlf linguist-language=INI
 
 *.html text eol=lf
 *.js text eol=lf

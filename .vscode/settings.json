@@ -4,9 +4,14 @@
         "*.anm": "lua",
         "*.scn": "lua",
         "*.cam": "lua",
-        "*.tra": "lua"
+        "*.tra": "lua",
+        "*.exa": "ini",
+        "*.exo": "ini"
     },
     "[lua]": {
+        "files.encoding": "shiftjis"
+    },
+    "[ini]": {
         "files.encoding": "shiftjis"
     }
 }
