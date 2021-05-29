@@ -12,7 +12,13 @@ local max_w, max_h = obj.getinfo("image_max")
 local w = math.min(max_w, obj.track0)
 local h = math.min(max_h, obj.track1)
 
-local params = {"file", obj.layer, obj.track2, pms, phs, pem, ""}
+-- rikky_module‚ª‚ ‚ê‚ÎƒV[ƒ“”Ô†‚ğæ“¾
+local layer = string.format("%d", obj.layer)
+if pcall(require, "rikky_module") then
+  layer = rikky_module.getinfo("root") .. "-" .. layer
+end
+
+local params = {"file", layer, obj.track2, pms, phs, pem, ""}
 
 -- ‹ó‚Ì‰æ‘œ‚ğ—pˆÓ‚·‚é
 obj.setoption("drawtarget", "tempbuffer", w, h)
