@@ -12,7 +12,7 @@ body {
 </style>
 <style id="markdown-style"></style>
 <style id="hljs-style"></style>
-<div class="markdown-body"></div>
+<div id="container"></div>
 <script src="./marked.min.js"></script>
 <script src="./highlight.min.js"></script>
 <script>
@@ -24,18 +24,15 @@ MathJax = {
 </script>
 <script id="MathJax-script" src="./mathjax/tex-chtml-full.js"></script>
 <script type="module">
-import { EmojisCache, StyleSelector } from './main.js';
+import { EmojisCache, StyleSelector, Page } from './main.js';
 
-const elem = document.querySelector('div.markdown-body');
+const elem = document.getElementById('container');
 
 const markdownStyles = new StyleSelector('markdown');
 const hljsStyles = new StyleSelector('hljs');
 const emojiCache = new EmojisCache();
-const current = {
-  file: 'a',
-  markdown: '',
-  emojis: {},
-};
+const pages = {};
+let current = new Page();
 
 const renderer = new marked.Renderer();
 renderer.text = text => {
@@ -90,7 +87,20 @@ AviUtlBrowser.registerRenderer(async params => {
   let update = false;
   const promises = [];
 
-  elem.style.zoom = param.scale;
+  if (param.layer in pages === false) {
+    pages[param.layer] = new Page();
+    elem.appendChild(pages[param.layer].elem);
+  }
+  current = pages[param.layer];
+  for (const key in pages) {
+    if (key === param.layer) {
+      pages[key].elem.style.display = 'block';
+    } else {
+      pages[key].elem.style.display = 'none';
+    }
+  }
+
+  current.elem.style.zoom = param.scale;
   promises.push(markdownStyles.select(param.markdownStyle));
   promises.push(hljsStyles.select(param.hljsStyle));
 
@@ -109,7 +119,7 @@ AviUtlBrowser.registerRenderer(async params => {
   }
 
   if (update) {
-    elem.innerHTML = marked(current.markdown);
+    current.elem.innerHTML = marked(current.markdown);
     document.querySelectorAll('.markdown-body img.emoji').forEach(img => {
       const src = img.dataset.src;
       img.src = src;

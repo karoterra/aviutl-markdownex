@@ -7,6 +7,10 @@ export class Emojis {
   getImagePath(key) {
     return `./img/${this.name}/${this.images[key]}`;
   }
+
+  static empty() {
+    return new Emojis('', {});
+  }
 }
 
 export class EmojisCache {
@@ -29,7 +33,7 @@ export class EmojisCache {
         this.cache[name] = new Emojis(name, json);
         return this.cache[name];
       })
-      .catch(() => {});
+      .catch(() => Emojis.empty());
   }
 }
 
@@ -68,5 +72,15 @@ export class StyleSelector {
     this.elem.textContent = this.styles[name];
     this.current = name;
     return true;
+  }
+}
+
+export class Page {
+  constructor() {
+    this.elem = document.createElement('div');
+    this.elem.classList.add('markdown-body');
+    this.file = 'a';
+    this.markdown = '';
+    this.emojis = Emojis.empty();
   }
 }
