@@ -112,11 +112,14 @@ AviUtlBrowser.registerRenderer(async params => {
   if (param.mode === "text" && current.markdown !== param.markdown) {
     current.markdown = param.markdown;
     update = true;
-  } else if (param.mode === "file" && current.file !== params.userfile) {
+  } else if (param.mode === "file"
+    && (current.mode === 'text' || current.file !== params.userfile))
+  {
     current.file = params.userfile;
     current.markdown = await fetch('/userfile').then(r => r.text());
     update = true;
   }
+  current.mode = param.mode;
 
   if (update) {
     current.elem.innerHTML = marked(current.markdown);

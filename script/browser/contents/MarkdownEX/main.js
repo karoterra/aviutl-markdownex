@@ -79,6 +79,7 @@ export class Page {
   constructor() {
     this.elem = document.createElement('div');
     this.elem.classList.add('markdown-body');
+    this.mode = '';
     this.file = 'a';
     this.markdown = '';
     this.emojis = Emojis.empty();
