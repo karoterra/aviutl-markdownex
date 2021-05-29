@@ -16,7 +16,7 @@ local max_w, max_h = obj.getinfo("image_max")
 local w = math.min(max_w, obj.track0)
 local h = math.min(max_h, obj.track1)
 
-local params = {"text", obj.track2, pms, phs, pem, markdown}
+local params = {"text", obj.layer, obj.track2, pms, phs, pem, markdown}
 
 -- ‹ó‚Ì‰æ‘œ‚ð—pˆÓ‚·‚é
 obj.setoption("drawtarget", "tempbuffer", w, h)

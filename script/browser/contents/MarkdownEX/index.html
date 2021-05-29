@@ -10,8 +10,8 @@ body {
   overflow: hidden;
 }
 </style>
-<link rel="stylesheet" id="markdown-style" href="./css/markdown/github-markdown.css">
-<link rel="stylesheet" id="hljs-style" href="./css/hljs/github.css">
+<style id="markdown-style"></style>
+<style id="hljs-style"></style>
 <div class="markdown-body"></div>
 <script src="./marked.min.js"></script>
 <script src="./highlight.min.js"></script>
@@ -24,21 +24,17 @@ MathJax = {
 </script>
 <script id="MathJax-script" src="./mathjax/tex-chtml-full.js"></script>
 <script type="module">
-const markdownStyle = document.getElementById('markdown-style');
-const hljsStyle = document.getElementById('hljs-style');
+import { EmojisCache, StyleSelector } from './main.js';
+
 const elem = document.querySelector('div.markdown-body');
 
+const markdownStyles = new StyleSelector('markdown');
+const hljsStyles = new StyleSelector('hljs');
+const emojiCache = new EmojisCache();
 const current = {
   file: 'a',
   markdown: '',
-  emojis_name: '',
   emojis: {},
-};
-
-const loadEmojis = name => {
-  return fetch(`./img/${name}/setting.json`)
-    .then(r => r.text())
-    .then(t => JSON.parse(t));
 };
 
 const renderer = new marked.Renderer();
@@ -48,8 +44,9 @@ renderer.text = text => {
   for (const match of text.matchAll(/:([a-zA-Z0-9-+_]+):/g)) {
     output += text.substring(start, match.index);
     start = match.index + match[0].length;
-    if (match[1] in current.emojis) {
-      output += `<img class="emoji" src="./img/${current.emojis_name}/${current.emojis[match[1]]}">`;
+    if (match[1] in current.emojis.images) {
+      const src = current.emojis.getImagePath(match[1]);
+      output += `<img class="emoji" data-src="${src}">`;
     } else {
       output += match[0];
     }
@@ -67,7 +64,6 @@ marked.setOptions({
   renderer: renderer,
 });
 
-const linkPrefix = `${location.protocol}//${location.host}`
 const parseParam = param => {
   let prev = 0;
   const popstring = () => {
@@ -80,9 +76,10 @@ const parseParam = param => {
 
   const parsed = {};
   parsed.mode = popstring();
+  parsed.layer = popstring();
   parsed.scale = parseInt(popstring(), 10) / 100;
-  parsed.markdownStyle = `${linkPrefix}/css/markdown/${popstring()}.css`;
-  parsed.hljsStyle = `${linkPrefix}/css/hljs/${popstring()}.css`;
+  parsed.markdownStyle = popstring();
+  parsed.hljsStyle = popstring();
   parsed.emojis = popstring();
   parsed.markdown = param.substring(prev);
   return parsed;
@@ -91,18 +88,14 @@ const parseParam = param => {
 AviUtlBrowser.registerRenderer(async params => {
   const param = parseParam(params.param);
   let update = false;
+  const promises = [];
 
   elem.style.zoom = param.scale;
-  if (markdownStyle.href !== param.markdownStyle) {
-    markdownStyle.href = param.markdownStyle;
-  }
-  if (hljsStyle.href !== param.hljsStyle) {
-    hljsStyle.href = param.hljsStyle;
-  }
+  promises.push(markdownStyles.select(param.markdownStyle));
+  promises.push(hljsStyles.select(param.hljsStyle));
 
-  if (current.emojis_name !== param.emojis) {
-    current.emojis_name = param.emojis;
-    current.emojis = await loadEmojis(param.emojis);
+  if (current.emojis.name !== param.emojis) {
+    current.emojis = await emojiCache.get(param.emojis);
     update = true;
   }
 
@@ -117,8 +110,17 @@ AviUtlBrowser.registerRenderer(async params => {
 
   if (update) {
     elem.innerHTML = marked(current.markdown);
+    document.querySelectorAll('.markdown-body img.emoji').forEach(img => {
+      const src = img.dataset.src;
+      img.src = src;
+      promises.push(new Promise(resolve => {
+        img.onload = () => resolve(img);
+      }));
+    });
     MathJax.typeset();
   }
+
+  await Promise.all(promises);
 
   return '';
 });
