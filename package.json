@@ -1,6 +1,6 @@
 {
   "name": "aviutl-markdownex",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,9 @@
     "copy:assets": "cpx -u assets/twemoji/assets/svg/* build/script/browser/contents/MarkdownEX/img/default/",
     "copy:exa": "cpx -u testdata/*.exa build/script/browser/",
     "copy:src": "cpx -u script/**/* build/script/",
+    "copy:doc": "cpx -u ./*.md build/ && cpx -u LICENSE build/",
     "generate:emojis": "node ./tools/generate_emoji_list.js",
+    "build": "run-s copy:{lib,assets,exa,src,doc}",
     "clean": "rimraf build"
   },
   "author": "",
