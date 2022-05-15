@@ -1,5 +1,6 @@
 build/
 release/
+bin/
 
 node_modules/
 

@@ -18,6 +18,7 @@
     "copy:doc": "cpx -u ./*.md build/ && cpx -u LICENSE build/",
     "generate:emojis": "node ./tools/generate_emoji_list.js",
     "build": "run-s copy:{lib,assets,exa,src,doc}",
+    "deploy:test": "cpx -u build/script/**/* bin/aviutl/script/",
     "clean": "rimraf build"
   },
   "author": "",
