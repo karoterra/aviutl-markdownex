@@ -18,18 +18,19 @@
     "copy:doc": "cpx -u ./*.md build/ && cpx -u LICENSE build/",
     "generate:emojis": "node ./tools/generate_emoji_list.js",
     "build": "run-s copy:{lib,assets,exa,src,doc}",
+    "deploy:test": "cpx -u build/script/**/* bin/aviutl/script/",
     "clean": "rimraf build"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "github-markdown-css": "^4.0.0",
-    "marked": "^2.0.5",
-    "mathjax": "^3.1.4"
+    "github-markdown-css": "^5.1.0",
+    "marked": "^4.0.15",
+    "mathjax": "^3.2.0"
   },
   "devDependencies": {
     "cpx": "^1.5.0",
-    "ejs": "^3.1.6",
+    "ejs": "^3.1.8",
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.2"
   }
