@@ -122,7 +122,7 @@ AviUtlBrowser.registerRenderer(async params => {
   current.mode = param.mode;
 
   if (update) {
-    current.elem.innerHTML = marked(current.markdown);
+    current.elem.innerHTML = marked.parse(current.markdown);
     document.querySelectorAll('.markdown-body img.emoji').forEach(img => {
       const src = img.dataset.src;
       img.src = src;
