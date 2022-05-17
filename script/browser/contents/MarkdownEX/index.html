@@ -9,10 +9,27 @@ body {
   margin-top: 1px;
   overflow: hidden;
 }
+#dummy {
+  visibility: hidden;
+}
 </style>
 <style id="markdown-style"></style>
 <style id="hljs-style"></style>
 <div id="container"></div>
+<div id="dummy">
+$$
+\mathbb{A}
+\mathcal{A} \mathbfcal{A}
+\mathfrak{A} \mathbffrak{A}
+\mathrm{A} \mathit{A} \mathbf{A}
+A \mathbfit{A}
+\mathsf{A} \mathsfit{A} \mathbfsf{A}
+\mathscr{A}
+\bigl( \Bigl( \biggl( \Biggl(
+\mathtt{A}
+\vec{} \boldsymbol{ \vec{} }
+$$
+</div>
 <script src="./marked.min.js"></script>
 <script src="./highlight.min.js"></script>
 <script>
@@ -60,6 +77,13 @@ marked.setOptions({
   },
   renderer: renderer,
 });
+
+const typeset = elems => {
+  MathJax.startup.promise = MathJax.startup.promise
+    .then(() => MathJax.typesetPromise(elems))
+    .catch(err => console.log('Typeset failed: ' + err.message));
+  return MathJax.startup.promise;
+};
 
 const parseParam = param => {
   let prev = 0;
@@ -130,7 +154,7 @@ AviUtlBrowser.registerRenderer(async params => {
         img.onload = () => resolve(img);
       }));
     });
-    MathJax.typeset();
+    promises.push(typeset([current.elem]));
   }
 
   await Promise.all(promises);
